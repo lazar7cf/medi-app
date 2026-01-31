@@ -13,10 +13,10 @@
       }
       /* Print specific styles for single-page PDF export */
       @media print {
-        @page { size: A4; margin: 10mm; }
-        body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        @page { size: A4; margin: 8mm; }
+        body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 10pt; }
         
-        /* Critical for React Apps to print full content */
+        /* Force single page */
         html, body, #root, #root > div {
           height: auto !important;
           min-height: auto !important;
@@ -27,19 +27,36 @@
 
         .no-print { display: none !important; }
         .print-only { display: block !important; }
-        .page-break { page-break-before: always; }
         
-        /* Flatten cards for print */
+        /* Condense for print */
+        .space-y-8 > * + * { margin-top: 1rem !important; }
+        .p-4, .p-6, .md:p-6 { padding: 0.5rem !important; }
+        .mb-4, .mb-6 { margin-bottom: 0.5rem !important; }
+        .pb-2 { padding-bottom: 0.25rem !important; }
+        
+        /* 2-Column Grid for Measurements */
+        .print-grid {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 15px !important;
+        }
+        
+        /* Ensure sections don't break halfway */
+        section { 
+          break-inside: avoid !important; 
+          border: 1px solid #e2e8f0 !important;
+          padding: 8px !important;
+          border-radius: 8px !important;
+        }
+        
+        h1 { font-size: 1.5rem !important; }
+        h2 { font-size: 1.1rem !important; }
+        
+        /* Flatten cards */
         .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
-        .border { border: 1px solid #ccc !important; }
         
-        /* Ensure tables break correctly */
-        tr { page-break-inside: avoid; }
-        thead { display: table-header-group; }
-        tfoot { display: table-footer-group; }
-        
-        /* Hide scrollbars */
-        ::-webkit-scrollbar { display: none; }
+        /* Hide browser default header/footer */
+        header, footer { display: none !important; }
       }
       .print-only { display: none; }
     </style>

@@ -1298,9 +1298,9 @@ const PlayerProfile = ({
       )}
 
       {/* Header - REVISED for Responsiveness */}
-      <div className="bg-white border-b px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between sticky top-0 z-20 shadow-sm no-print gap-4">
+      <div className="bg-white border-b px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between sticky top-0 z-20 shadow-sm gap-4">
         <div className="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
-          <button onClick={onBack} className="text-slate-500 hover:text-black flex items-center gap-1 transition-colors shrink-0">
+          <button onClick={onBack} className="text-slate-500 hover:text-black flex items-center gap-1 transition-colors shrink-0 no-print">
             <ChevronRight className="w-5 h-5 rotate-180" />
             <span className="text-sm font-medium sm:hidden">Nazad</span>
           </button>
@@ -1324,7 +1324,7 @@ const PlayerProfile = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0">
+        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 no-print">
           {/* Status Select */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-400 sm:hidden">Status:</span>
@@ -1359,8 +1359,8 @@ const PlayerProfile = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6">
-        <div className="max-w-5xl mx-auto space-y-8">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 print:p-0">
+        <div className="max-w-5xl mx-auto space-y-8 print:space-y-4 print-grid">
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
