@@ -99,11 +99,10 @@ class DataService {
   }
 
   async addPlayer(player: Partial<Player>): Promise<Player> {
-    const newPlayer: Player = {
-      id: `np_${Date.now()}`,
+    const playerToInsert = {
       name: player.name || 'Nepoznat',
       birthYear: player.birthYear || 2000,
-      teamId: player.teamId || '',
+      teamId: player.teamId || null,
       position: player.position || POSITIONS[0],
       status: 'green',
       morphology: [],
@@ -114,7 +113,7 @@ class DataService {
       reports: []
     };
 
-    const { data, error } = await supabase.from('players').insert([newPlayer]).select().single();
+    const { data, error } = await supabase.from('players').insert([playerToInsert]).select().single();
     if (error) throw error;
     return data;
   }
