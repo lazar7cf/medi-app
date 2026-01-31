@@ -267,7 +267,7 @@ const TableSection = ({
   onEdit,
   onDelete
 }: {
-  title: string;
+  title?: string;
   data: Measurement[];
   columns: { key: string, label: string }[];
   onAdd: (data: Measurement) => void;
@@ -303,11 +303,13 @@ const TableSection = ({
 
   return (
     <div className="bg-white border rounded mb-6 break-inside-avoid">
-      <div className="px-4 py-3 bg-slate-50 border-b flex justify-between items-center">
-        <h3 className="font-semibold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
-          <Activity className="w-4 h-4 text-slate-500" />
-          {title}
-        </h3>
+      <div className={`px-4 py-3 bg-slate-50 border-b flex ${title ? 'justify-between' : 'justify-end'} items-center`}>
+        {title && (
+          <h3 className="font-semibold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+            <Activity className="w-4 h-4 text-slate-500" />
+            {title}
+          </h3>
+        )}
         <button
           onClick={() => {
             if (isAdding) handleCancel();
@@ -1248,6 +1250,16 @@ const PlayerProfile = ({
 }) => {
   const [showEditModal, setShowEditModal] = useState(false);
 
+  // Set document title for PDF export name
+  useEffect(() => {
+    if (player?.name) {
+      document.title = `${player.name} - Profil`;
+    } else {
+      document.title = 'Medi-Sport Aplikacija';
+    }
+    return () => { document.title = 'Medi-Sport Aplikacija'; };
+  }, [player?.name]);
+
   // Helper to update specific measurement arrays
   const updateMeasurements = async (key: keyof Player, newData: any[]) => {
     const updatedPlayer = { ...player, [key]: newData };
@@ -1360,21 +1372,20 @@ const PlayerProfile = ({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 print:p-0">
-        <div className="max-w-5xl mx-auto space-y-8 print:space-y-4 print-grid print:max-w-none print:w-full print:mx-0">
+        <div className="max-w-5xl mx-auto space-y-8 print:space-y-2 print:max-w-none print:w-full print:mx-0">
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-600" /> Morfološka Merenja
+              <User className="w-5 h-5 text-blue-600" /> Test Morfologije
             </h2>
             <TableSection
-              title="Antropometrija"
               data={player.morphology}
               columns={[
-                { key: 'height', label: 'Visina (cm)' },
-                { key: 'weight', label: 'Težina (kg)' },
-                { key: 'fat', label: 'Masti (%)' },
-                { key: 'muscle', label: 'Mišići (%)' },
-                { key: 'raspon', label: 'Raspon (cm)' },
+                { key: 'vis_t', label: 'A VIS T' },
+                { key: 'tez_t', label: 'A TEŽ T' },
+                { key: 'duz_n', label: 'A DUŽ N' },
+                { key: 'o_nadk', label: 'A O NADK' },
+                { key: 'o_trbu', label: 'A O TRBU' },
               ]}
               onAdd={(d) => handleAddMeasurement('morphology', d)}
               onEdit={(i, d) => handleEditMeasurement('morphology', i, d)}
@@ -1384,16 +1395,19 @@ const PlayerProfile = ({
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-green-600" /> Motorička Testiranja
+              <Activity className="w-5 h-5 text-green-600" /> Test Motorike
             </h2>
             <TableSection
-              title="Testiranja Brzine i Skočnosti"
               data={player.motor}
               columns={[
-                { key: 'sprint5', label: 'Sprint 5m (s)' },
-                { key: 'sprint20', label: 'Sprint 20m (s)' },
-                { key: 'cmj', label: 'Skok CMJ (cm)' },
-                { key: 'sj', label: 'Skok SJ (cm)' },
+                { key: 'm_tap_rn', label: 'M TAP R i N' },
+                { key: 'm_skok_opto', label: 'M SKOK OPTO' },
+                { key: 'm_d_pred', label: 'M D PRED' },
+                { key: 'm_d_trup', label: 'M D TRUP 30 sek.' },
+                { key: 'm_rs_sklek', label: 'M RS SKLEK O' },
+                { key: 'm_brzina_5', label: 'M BRZINA 5 m.' },
+                { key: 'm_brzina_20', label: 'M BRZINA 20m' },
+                { key: 'm_slalo_20', label: 'M SLALO 20 m. B. L.' },
               ]}
               onAdd={(d) => handleAddMeasurement('motor', d)}
               onEdit={(i, d) => handleEditMeasurement('motor', i, d)}
@@ -1403,15 +1417,15 @@ const PlayerProfile = ({
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-              <CheckSquare className="w-5 h-5 text-orange-600" /> Specifična Testiranja
+              <CheckSquare className="w-5 h-5 text-orange-600" /> Test Specifične motorike
             </h2>
             <TableSection
-              title="Fudbalska Specifičnost"
               data={player.specific}
               columns={[
-                { key: 'vodjenje', label: 'Vođenje (s)' },
-                { key: 'sut', label: 'Šut Preciznost (1-10)' },
-                { key: 'agilnost', label: 'Agilnost (s)' },
+                { key: 'slal_20', label: 'SM SLAL 20m L' },
+                { key: 'cica_15', label: 'SM CICA 15m L' },
+                { key: 'sm_96', label: 'SM 96369' },
+                { key: 'sm_ajax', label: 'SM AJAX' },
               ]}
               onAdd={(d) => handleAddMeasurement('specific', d)}
               onEdit={(i, d) => handleEditMeasurement('specific', i, d)}
@@ -1421,15 +1435,12 @@ const PlayerProfile = ({
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-              <Stethoscope className="w-5 h-5 text-red-600" /> Funkcionalna Testiranja
+              <Stethoscope className="w-5 h-5 text-red-600" /> Test Funkcionalnosti
             </h2>
             <TableSection
-              title="Kardio / Ergospirometrija"
               data={player.functional}
               columns={[
-                { key: 'vo2max', label: 'VO2 Max' },
-                { key: 'hr_max', label: 'HR Max' },
-                { key: 'hr_rest', label: 'HR Rest' },
+                { key: 'kuper_12', label: 'KUPER 12 min.' },
               ]}
               onAdd={(d) => handleAddMeasurement('functional', d)}
               onEdit={(i, d) => handleEditMeasurement('functional', i, d)}
@@ -1439,15 +1450,16 @@ const PlayerProfile = ({
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-purple-600" /> Zdravstveni Karton
+              <FileText className="w-5 h-5 text-purple-600" /> Test KS i DT
             </h2>
             <TableSection
-              title="Dijagnostika"
               data={player.diagnostics}
               columns={[
-                { key: 'krvna_slika', label: 'Krvna Slika' },
-                { key: 'ekg', label: 'EKG' },
-                { key: 'povreda', label: 'Status Povrede' },
+                { key: 'kifo', label: 'KIFO.' },
+                { key: 'skoli', label: 'SKOLI.' },
+                { key: 'lor', label: 'LOR.' },
+                { key: 'nog', label: 'NOG.' },
+                { key: 'sto', label: 'STO.' },
               ]}
               onAdd={(d) => handleAddMeasurement('diagnostics', d)}
               onEdit={(i, d) => handleEditMeasurement('diagnostics', i, d)}
@@ -1455,7 +1467,7 @@ const PlayerProfile = ({
             />
           </section>
 
-          <section className="break-inside-avoid print:break-before-page">
+          <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-slate-600" /> Izveštaji i Anamneza
             </h2>
