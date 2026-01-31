@@ -1,0 +1,9 @@
+/* Base styles for Medi-Sport */
+:root {
+  --primary: #2563eb;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
