@@ -89,7 +89,11 @@ class DataService {
   async getPlayers(): Promise<Player[]> {
     const { data, error } = await supabase.from('players').select('*');
     if (error) throw error;
-    return data || [];
+    return (data || []).map((p: any) => ({
+      ...p,
+      birthYear: p.birthyear,
+      teamId: p.teamid
+    }));
   }
 
   async addTeam(name: string): Promise<Team> {
@@ -99,10 +103,11 @@ class DataService {
   }
 
   async addPlayer(player: Partial<Player>): Promise<Player> {
-    const playerToInsert = {
+    // We map birthYear -> birthyear and teamId -> teamid to be safe with Postgres case-insensitivity
+    const playerToInsert: any = {
       name: player.name || 'Nepoznat',
-      birthYear: player.birthYear || 2000,
-      teamId: player.teamId || null,
+      birthyear: player.birthYear || 2000,
+      teamid: player.teamId || null,
       position: player.position || POSITIONS[0],
       status: 'green',
       morphology: [],
@@ -113,20 +118,40 @@ class DataService {
       reports: []
     };
 
-    const { data, error } = await supabase.from('players').insert([playerToInsert]).select().single();
+    const { data, error } = await supabase.from('players').insert([playerToInsert]).select();
     if (error) throw error;
-    return data;
+
+    // Map back to camelCase for the frontend
+    const result = data[0];
+    return {
+      ...result,
+      birthYear: result.birthyear,
+      teamId: result.teamid
+    };
   }
 
   async updatePlayer(player: Player): Promise<Player> {
+    const playerToUpdate: any = {
+      ...player,
+      birthyear: player.birthYear,
+      teamid: player.teamId
+    };
+    delete playerToUpdate.birthYear;
+    delete playerToUpdate.teamId;
+
     const { data, error } = await supabase
       .from('players')
-      .update(player)
+      .update(playerToUpdate)
       .eq('id', player.id)
-      .select()
-      .single();
+      .select();
+
     if (error) throw error;
-    return data;
+    const result = data[0];
+    return {
+      ...result,
+      birthYear: result.birthyear,
+      teamId: result.teamid
+    };
   }
 
   async updatePlayerStatus(id: string, status: StatusColor): Promise<void> {
@@ -530,9 +555,14 @@ const AddPlayerModal = ({
     e.preventDefault();
     if (!formData.name) return;
     setLoading(true);
-    await onSave(formData);
-    setLoading(false);
-    onClose();
+    try {
+      await onSave(formData);
+      onClose();
+    } catch (err: any) {
+      alert(`Greška pri čuvanju igrača: ${err.message || 'Nepoznato'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -1507,7 +1537,10 @@ const App = () => {
     try {
       const newPlayer = await api.addPlayer(p);
       setPlayers(prev => [newPlayer, ...prev]);
-    } catch (e) { console.error(e); }
+    } catch (e: any) {
+      console.error(e);
+      throw e; // Re-throw so the modal can handle it
+    }
   };
 
   const handleAddTeam = async (name: string) => {
