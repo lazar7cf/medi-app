@@ -765,24 +765,37 @@ const ALL_COLUMNS: ColumnDef[] = [
   { id: 'pos', label: 'Pozicija', category: 'Opšte', getter: p => p.position },
 
   // Morfologija
-  { id: 'height', label: 'Visina (cm)', category: 'Morfologija', getter: p => p.morphology[0]?.height || '-' },
-  { id: 'weight', label: 'Težina (kg)', category: 'Morfologija', getter: p => p.morphology[0]?.weight || '-' },
-  { id: 'fat', label: 'Masti (%)', category: 'Morfologija', getter: p => p.morphology[0]?.fat || '-' },
-  { id: 'muscle', label: 'Mišići (%)', category: 'Morfologija', getter: p => p.morphology[0]?.muscle || '-' },
+  { id: 'vis_t', label: 'A VIS T', category: 'Morfologija', getter: p => p.morphology[0]?.vis_t || '-' },
+  { id: 'tez_t', label: 'A TEŽ T', category: 'Morfologija', getter: p => p.morphology[0]?.tez_t || '-' },
+  { id: 'duz_n', label: 'A DUŽ N', category: 'Morfologija', getter: p => p.morphology[0]?.duz_n || '-' },
+  { id: 'o_nadk', label: 'A O NADK', category: 'Morfologija', getter: p => p.morphology[0]?.o_nadk || '-' },
+  { id: 'o_trbu', label: 'A O TRBU', category: 'Morfologija', getter: p => p.morphology[0]?.o_trbu || '-' },
 
   // Motorika
-  { id: 's5', label: 'Sprint 5m', category: 'Motorika', getter: p => p.motor[0]?.sprint5 || '-' },
-  { id: 's20', label: 'Sprint 20m', category: 'Motorika', getter: p => p.motor[0]?.sprint20 || '-' },
-  { id: 'cmj', label: 'Skok CMJ', category: 'Motorika', getter: p => p.motor[0]?.cmj || '-' },
-  { id: 'sj', label: 'Skok SJ', category: 'Motorika', getter: p => p.motor[0]?.sj || '-' },
+  { id: 'tap_rn', label: 'TAP R i N', category: 'Motorika', getter: p => p.motor[0]?.m_tap_rn || '-' },
+  { id: 'skok_opto', label: 'SKOK OPTO', category: 'Motorika', getter: p => p.motor[0]?.m_skok_opto || '-' },
+  { id: 'd_pred', label: 'D PRED', category: 'Motorika', getter: p => p.motor[0]?.m_d_pred || '-' },
+  { id: 'd_trup', label: 'D TRUP', category: 'Motorika', getter: p => p.motor[0]?.m_d_trup || '-' },
+  { id: 'rs_sklek', label: 'RS SKLEK', category: 'Motorika', getter: p => p.motor[0]?.m_rs_sklek || '-' },
+  { id: 'm_brzina_5', label: 'Brzina 5m', category: 'Motorika', getter: p => p.motor[0]?.m_brzina_5 || '-' },
+  { id: 'm_brzina_20', label: 'Brzina 20m', category: 'Motorika', getter: p => p.motor[0]?.m_brzina_20 || '-' },
+  { id: 'slalo_20', label: 'Slalom 20m', category: 'Motorika', getter: p => p.motor[0]?.m_slalo_20 || '-' },
 
   // Specifično
-  { id: 'dribble', label: 'Vođenje', category: 'Specifično', getter: p => p.specific[0]?.vodjenje || '-' },
-  { id: 'shoot', label: 'Šut (1-10)', category: 'Specifično', getter: p => p.specific[0]?.sut || '-' },
+  { id: 'slal_20_l', label: 'SM SLAL 20m', category: 'Specifično', getter: p => p.specific[0]?.slal_20 || '-' },
+  { id: 'cica_15', label: 'SM CICA 15m', category: 'Specifično', getter: p => p.specific[0]?.cica_15 || '-' },
+  { id: 'sm_96', label: 'SM 96369', category: 'Specifično', getter: p => p.specific[0]?.sm_96 || '-' },
+  { id: 'sm_ajax', label: 'SM AJAX', category: 'Specifično', getter: p => p.specific[0]?.sm_ajax || '-' },
 
   // Funkcionalno
-  { id: 'vo2', label: 'VO2 Max', category: 'Funkcionalno', getter: p => p.functional[0]?.vo2max || '-' },
-  { id: 'hrmax', label: 'HR Max', category: 'Funkcionalno', getter: p => p.functional[0]?.hr_max || '-' },
+  { id: 'kuper', label: 'KUPER 12', category: 'Funkcionalno', getter: p => p.functional[0]?.kuper_12 || '-' },
+
+  // KS i DT
+  { id: 'kifo', label: 'KIFO', category: 'KS i DT', getter: p => p.diagnostics[0]?.kifo || '-' },
+  { id: 'skoli', label: 'SKOLI', category: 'KS i DT', getter: p => p.diagnostics[0]?.skoli || '-' },
+  { id: 'lor', label: 'LOR', category: 'KS i DT', getter: p => p.diagnostics[0]?.lor || '-' },
+  { id: 'nog', label: 'NOG', category: 'KS i DT', getter: p => p.diagnostics[0]?.nog || '-' },
+  { id: 'sto', label: 'STO', category: 'KS i DT', getter: p => p.diagnostics[0]?.sto || '-' },
 
   // Izveštaji
   { id: 'rep_med', label: 'Poslednji Med. Nalaz', category: 'Izveštaji', getter: p => p.reports[0]?.medical || '-' },
@@ -802,7 +815,7 @@ const ClubSummary = ({
   const [sortKey, setSortKey] = useState<'name' | 'birthYear'>('name');
   const [showConfig, setShowConfig] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
-    new Set(['year', 'team', 'height', 'weight', 's20', 'vo2'])
+    new Set(['year', 'team', 'vis_t', 'tez_t', 'm_brzina_20', 'kuper'])
   );
 
   const processed = players
@@ -823,7 +836,7 @@ const ClubSummary = ({
   const categories = Array.from(new Set(ALL_COLUMNS.map(c => c.category)));
 
   return (
-    <div className="bg-slate-100 min-h-screen w-full animate-fade-in flex flex-col">
+    <div className="bg-slate-100 min-h-screen w-full animate-fade-in flex flex-col" style={{ page: 'landscape' } as any}>
       {/* Top Bar */}
       <div className="bg-white border-b p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center sticky top-0 z-20 gap-4 no-print shadow-sm">
         <div className="flex items-center gap-4">
