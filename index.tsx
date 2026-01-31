@@ -1360,7 +1360,7 @@ const PlayerProfile = ({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 print:p-0">
-        <div className="max-w-5xl mx-auto space-y-8 print:space-y-4 print-grid">
+        <div className="max-w-5xl mx-auto space-y-8 print:space-y-4 print-grid print:max-w-none print:w-full print:mx-0">
 
           <section className="break-inside-avoid">
             <h2 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">

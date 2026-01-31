@@ -1,65 +1,136 @@
 <!DOCTYPE html>
 <html lang="sr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medi-Sport</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
-      }
-      /* Print specific styles for single-page PDF export */
-      @media print {
-        @page { size: A4; margin: 8mm; }
-        body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 10pt; }
-        
-        /* Force single page */
-        html, body, #root, #root > div {
-          height: auto !important;
-          min-height: auto !important;
-          overflow: visible !important;
-          width: 100% !important;
-          position: static !important;
-        }
 
-        .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        
-        /* Condense for print */
-        .space-y-8 > * + * { margin-top: 1rem !important; }
-        .p-4, .p-6, .md:p-6 { padding: 0.5rem !important; }
-        .mb-4, .mb-6 { margin-bottom: 0.5rem !important; }
-        .pb-2 { padding-bottom: 0.25rem !important; }
-        
-        /* 2-Column Grid for Measurements */
-        .print-grid {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          gap: 15px !important;
-        }
-        
-        /* Ensure sections don't break halfway */
-        section { 
-          break-inside: avoid !important; 
-          border: 1px solid #e2e8f0 !important;
-          padding: 8px !important;
-          border-radius: 8px !important;
-        }
-        
-        h1 { font-size: 1.5rem !important; }
-        h2 { font-size: 1.1rem !important; }
-        
-        /* Flatten cards */
-        .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
-        
-        /* Hide browser default header/footer */
-        header, footer { display: none !important; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medi-Sport</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+    }
+
+    /* Print specific styles for single-page PDF export */
+    @media print {
+      @page {
+        size: A4;
+        margin: 5mm;
       }
-      .print-only { display: none; }
-    </style>
+
+      body {
+        background-color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 9pt;
+      }
+
+      /* Force single page */
+      html,
+      body,
+      #root,
+      #root>div {
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        width: 100% !important;
+        position: static !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .print-only {
+        display: block !important;
+      }
+
+      /* Fit content to width */
+      * {
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Condense for print */
+      .space-y-8>*+* {
+        margin-top: 0.5rem !important;
+      }
+
+      .p-4,
+      .p-6,
+      .md:p-6 {
+        padding: 0.25rem !important;
+      }
+
+      .mb-4,
+      .mb-6 {
+        margin-bottom: 0.25rem !important;
+      }
+
+      .pb-2 {
+        padding-bottom: 0.1rem !important;
+      }
+
+      /* 2-Column Grid for Measurements */
+      .print-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* Ensure sections don't break halfway */
+      section {
+        break-inside: avoid !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 5px !important;
+        border-radius: 6px !important;
+        width: 100% !important;
+      }
+
+      h1 {
+        font-size: 1.2rem !important;
+        margin: 0 !important;
+      }
+
+      h2 {
+        font-size: 1rem !important;
+        margin-bottom: 4px !important;
+      }
+
+      /* Flatten cards */
+      .shadow-sm,
+      .shadow-md,
+      .shadow-lg {
+        box-shadow: none !important;
+      }
+
+      /* Table adjustments for print */
+      table {
+        width: 100% !important;
+        table-layout: auto !important;
+      }
+
+      th,
+      td {
+        padding: 4px !important;
+        font-size: 8pt !important;
+      }
+
+      /* Hide browser default header/footer */
+      header,
+      footer {
+        display: none !important;
+      }
+    }
+
+    .print-only {
+      display: none;
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -71,10 +142,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>
