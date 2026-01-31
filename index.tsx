@@ -33,14 +33,11 @@ import {
 } from 'lucide-react';
 
 // --- CONFIGURATION ---
-// KADA BUDEŠ SPREMAN, SAMO UNESI PODATKE OVDE I APLIKACIJA ĆE PREĆI NA SUPABASE
-const SUPABASE_URL = ""; 
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || ""; 
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
-// Initialize Supabase Client (Only if keys exist)
-const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY) 
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-  : null;
+// Initialize Supabase Client
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- Types & Interfaces ---
 
@@ -78,144 +75,27 @@ interface Player {
   reports: Report[];
 }
 
-// --- Mock Data Service (Fallback / Demo Mode) ---
-
-const MOCK_TEAMS: Team[] = [
-  { id: 't1', name: 'Prvi Tim' },
-  { id: 't2', name: 'B Tim (Razvojni)' },
-  { id: 't3', name: 'U19 Juniori A' },
-  { id: 't4', name: 'U19 Juniori B' },
-  { id: 't5', name: 'U17 Kadeti A' },
-  { id: 't6', name: 'U17 Kadeti B' },
-  { id: 't7', name: 'U15 Pioniri A' },
-  { id: 't8', name: 'U15 Pioniri B' },
-  { id: 't9', name: 'U13 Petlići' },
-  { id: 't10', name: 'U11 Početnici' },
-  { id: 't11', name: 'Ženski Tim A' },
-  { id: 't12', name: 'Veterani' },
-];
-
+// --- Constants ---
 const POSITIONS = ['Golman', 'Desni Bek', 'Levi Bek', 'Štoper', 'Def. Vezni', 'Cent. Vezni', 'Ofan. Vezni', 'Desno Krilo', 'Levo Krilo', 'Napadač'];
-const NAMES = ['Marko', 'Jovan', 'Milan', 'Nikola', 'Stefan', 'Luka', 'Filip', 'Aleksa', 'Vuk', 'Lazar', 'Miloš'];
-const SURNAMES = ['Jovanović', 'Nikolić', 'Marković', 'Đorđević', 'Stojanović', 'Ilić', 'Simić', 'Pavlović', 'Mitić'];
-
-const MOCK_PLAYERS: Player[] = Array.from({ length: 65 }).map((_, i) => {
-  // SPECIAL CASE: Petar Petrović (Rich Data for PDF Testing)
-  if (i === 0) {
-    return {
-      id: `p0`,
-      name: 'Petar Petrović',
-      birthYear: 2004,
-      teamId: 't1',
-      position: 'Napadač',
-      status: 'green',
-      morphology: [
-        { date: '2024-05-20', height: 185, weight: 82, fat: 10.5, muscle: 45, raspon: 188 },
-        { date: '2024-02-15', height: 185, weight: 83, fat: 11.2, muscle: 44.5, raspon: 188 },
-        { date: '2023-11-10', height: 184, weight: 81, fat: 12.0, muscle: 43, raspon: 188 },
-      ],
-      motor: [
-        { date: '2024-05-22', sprint5: 1.02, sprint20: 3.85, cmj: 52, sj: 48 },
-        { date: '2024-02-18', sprint5: 1.05, sprint20: 3.92, cmj: 50, sj: 46 },
-        { date: '2023-11-15', sprint5: 1.10, sprint20: 4.05, cmj: 48, sj: 44 },
-      ],
-      specific: [
-        { date: '2024-04-10', vodjenje: 12.5, sut: 9, agilnost: 8.2 },
-        { date: '2024-01-20', vodjenje: 13.1, sut: 8, agilnost: 8.6 },
-      ],
-      functional: [
-        { date: '2024-03-01', vo2max: 58.5, hr_max: 198, hr_rest: 48 },
-        { date: '2023-09-15', vo2max: 56.0, hr_max: 200, hr_rest: 52 },
-      ],
-      diagnostics: [
-        { date: '2024-01-10', krvna_slika: 'Uredna', ekg: 'Sinusni ritam', povreda: 'Nema' },
-      ],
-      reports: [
-        { 
-          id: 'rep_1', 
-          date: '2024-05-25', 
-          medical: 'Igrač se u potpunosti oporavio od istegnuća zadnje lože. Magnetna rezonanca pokazuje potpunu sanaciju tkiva. Dozvoljen povratak u pun trenažni proces bez restrikcija. Preporučuje se preventivno istezanje nakon treninga.', 
-          psychological: 'Visok nivo samopouzdanja nakon povratka na teren. Igrač pokazuje izuzetnu mentalnu snagu i liderske sposobnosti u komunikaciji sa mlađim saigračima. Fokusiran na predstojeće prvenstvo.' 
-        },
-        { 
-          id: 'rep_2', 
-          date: '2024-03-10', 
-          medical: 'Prijavljuje bol u predelu desnog kolena nakon duže fizičke aktivnosti. Kliničkim pregledom ustanovljena blaga iritacija patelarne tetive. Propisana krioterapija i smanjen intenzitet skokova u narednih 7 dana.', 
-          psychological: 'Primetna nervoza zbog lakše povrede. Obavljen razgovor o važnosti strpljenja u procesu oporavka. Motivacija za rehabilitaciju je visoka.' 
-        }
-      ],
-    };
-  }
-
-  // Algorithmic generation for other players
-  const teamIndex = i % MOCK_TEAMS.length;
-  const birthYearBase = 2005 - Math.floor(teamIndex / 2); 
-  
-  return {
-    id: `p${i}`,
-    name: `${NAMES[i % NAMES.length]} ${SURNAMES[i % SURNAMES.length]}`,
-    birthYear: birthYearBase + (i % 3),
-    teamId: MOCK_TEAMS[teamIndex].id,
-    position: POSITIONS[i % POSITIONS.length],
-    status: ['green', 'green', 'green', 'yellow', 'yellow', 'red', 'purple', 'orange'][i % 8] as StatusColor,
-    morphology: [
-      { date: '2024-01-15', height: 175 + (i % 15), weight: 70 + (i % 20), fat: 10 + (i % 5), muscle: 40 + (i % 10) },
-      { date: '2024-03-20', height: 176 + (i % 15), weight: 71 + (i % 20), fat: 9.5 + (i % 5), muscle: 41 + (i % 10) },
-    ],
-    motor: [],
-    specific: [],
-    functional: [],
-    diagnostics: [],
-    reports: i % 5 === 0 ? [
-      { 
-        id: `r${i}`, 
-        date: '2024-04-10', 
-        medical: 'Lakša distorzija skočnog zgloba. Preporučena terapija ledom i mirovanje 2 dana.', 
-        psychological: 'Visok nivo motivacije, ali primetna anksioznost pred važne mečeve.' 
-      }
-    ] : [],
-  };
-});
 
 // --- DATA SERVICE LAYER ---
-// Ova klasa apstrahuje izvor podataka.
-// Ako je supabaseClient aktivan, koristi bazu. Ako nije, koristi mock podatke.
-
 class DataService {
-  // In-memory store for Demo Mode (to simulate persistence within session)
-  private _demoPlayers = [...MOCK_PLAYERS];
-  private _demoTeams = [...MOCK_TEAMS];
-
   async getTeams(): Promise<Team[]> {
-    if (supabase) {
-      const { data, error } = await supabase.from('teams').select('*');
-      if (error) throw error;
-      return data || [];
-    }
-    // Demo Fallback
-    return new Promise(resolve => setTimeout(() => resolve(this._demoTeams), 300));
+    const { data, error } = await supabase.from('teams').select('*');
+    if (error) throw error;
+    return data || [];
   }
 
   async getPlayers(): Promise<Player[]> {
-    if (supabase) {
-      const { data, error } = await supabase.from('players').select('*');
-      if (error) throw error;
-      return data || [];
-    }
-    // Demo Fallback
-    return new Promise(resolve => setTimeout(() => resolve(this._demoPlayers), 500));
+    const { data, error } = await supabase.from('players').select('*');
+    if (error) throw error;
+    return data || [];
   }
 
   async addTeam(name: string): Promise<Team> {
-    const newTeam = { id: `t_${Date.now()}`, name };
-    if (supabase) {
-      const { data, error } = await supabase.from('teams').insert([{ name }]).select().single();
-      if (error) throw error;
-      return data;
-    }
-    // Demo Fallback
-    this._demoTeams.push(newTeam);
-    return new Promise(resolve => setTimeout(() => resolve(newTeam), 200));
+    const { data, error } = await supabase.from('teams').insert([{ name }]).select().single();
+    if (error) throw error;
+    return data;
   }
 
   async addPlayer(player: Partial<Player>): Promise<Player> {
@@ -223,7 +103,7 @@ class DataService {
       id: `np_${Date.now()}`,
       name: player.name || 'Nepoznat',
       birthYear: player.birthYear || 2000,
-      teamId: player.teamId || this._demoTeams[0].id,
+      teamId: player.teamId || '',
       position: player.position || POSITIONS[0],
       status: 'green',
       morphology: [],
@@ -234,46 +114,25 @@ class DataService {
       reports: []
     };
 
-    if (supabase) {
-      // NOTE: For Supabase, you'd likely exclude ID to let DB autogenerate, 
-      // or use UUIDs. Ensure your Table structure matches the Player interface.
-      const { data, error } = await supabase.from('players').insert([newPlayer]).select().single();
-      if (error) throw error;
-      return data;
-    }
-
-    // Demo Fallback
-    this._demoPlayers.unshift(newPlayer);
-    return new Promise(resolve => setTimeout(() => resolve(newPlayer), 200));
+    const { data, error } = await supabase.from('players').insert([newPlayer]).select().single();
+    if (error) throw error;
+    return data;
   }
 
   async updatePlayer(player: Player): Promise<Player> {
-    if (supabase) {
-      const { data, error } = await supabase
-        .from('players')
-        .update(player)
-        .eq('id', player.id)
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
-    }
-
-    // Demo Fallback
-    this._demoPlayers = this._demoPlayers.map(p => p.id === player.id ? player : p);
-    return new Promise(resolve => setTimeout(() => resolve(player), 200));
+    const { data, error } = await supabase
+      .from('players')
+      .update(player)
+      .eq('id', player.id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   }
 
   async updatePlayerStatus(id: string, status: StatusColor): Promise<void> {
-     if (supabase) {
-       const { error } = await supabase.from('players').update({ status }).eq('id', id);
-       if (error) throw error;
-       return;
-     }
-
-     // Demo Fallback
-     this._demoPlayers = this._demoPlayers.map(p => p.id === id ? { ...p, status } : p);
-     return Promise.resolve();
+    const { error } = await supabase.from('players').update({ status }).eq('id', id);
+    if (error) throw error;
   }
 }
 
@@ -307,8 +166,8 @@ const getStatusLabel = (status: StatusColor) => {
 // --- Components ---
 
 const LoginForm = ({ onLogin }: { onLogin: () => void }) => {
-  const [email, setEmail] = useState('medico@klub.com');
-  const [password, setPassword] = useState('demo123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -322,12 +181,6 @@ const LoginForm = ({ onLogin }: { onLogin: () => void }) => {
           <Activity className="w-12 h-12 text-blue-600 mx-auto mb-2" />
           <h1 className="text-2xl font-bold text-slate-800">Medi-Sport</h1>
           <p className="text-slate-500 text-sm">Pristup za ovlašćena lica</p>
-        </div>
-        
-        <div className="bg-blue-50 border border-blue-200 rounded p-4 mb-6 text-sm text-blue-800">
-          <p className="font-bold mb-1">Demo Pristup Podaci:</p>
-          <p>Email: <span className="font-mono">medico@klub.com</span></p>
-          <p>Lozinka: <span className="font-mono">demo123</span></p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
