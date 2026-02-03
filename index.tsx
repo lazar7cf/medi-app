@@ -35,8 +35,9 @@ import {
 // --- CONFIGURATION ---
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+const IS_SUPABASE_CONFIGURED = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-// Initialize Supabase Client
+// Initialize Supabase Client (will still be created if misconfigured, but UI will show a clear error)
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- Types & Interfaces ---
@@ -1588,6 +1589,30 @@ const App = () => {
       setPlayers(prev => prev.map(p => p.id === result.id ? result : p));
     } catch (e) { console.error(e); }
   };
+
+  // If Supabase isn't configured correctly, fail fast with a clear message
+  if (!IS_SUPABASE_CONFIGURED) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md border-t-4 border-red-600">
+          <div className="text-center mb-4">
+            <AlertTriangle className="w-10 h-10 text-red-600 mx-auto mb-2" />
+            <h1 className="text-xl font-bold text-slate-800">Problem sa konfiguracijom</h1>
+          </div>
+          <p className="text-sm text-slate-600 mb-2">
+            Supabase konfiguracija nije ispravna. Proverite da su promenljive okruženja
+            <code className="mx-1 px-1 py-0.5 bg-slate-100 rounded text-xs">VITE_SUPABASE_URL</code>
+            i
+            <code className="mx-1 px-1 py-0.5 bg-slate-100 rounded text-xs">VITE_SUPABASE_ANON_KEY</code>
+            podešene na serveru.
+          </p>
+          <p className="text-xs text-slate-500">
+            Nakon ažuriranja konfiguracije, ponovo pokrenite build/deploy aplikacije.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!session) {
     return <LoginForm onLogin={handleLogin} />;
